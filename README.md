@@ -1,3 +1,5 @@
+[![Circle CI](https://circleci.com/gh/saio-fr/database-component.svg?style=svg)](https://circleci.com/gh/saio-fr/database-component)
+
 Database ORM Component for MS-SAIO
 ==========================================
 cDB is a ms-saio component integration for Sequelize so if you want to use it you should read [the doc](http://docs.sequelizejs.com/en/latest/) !

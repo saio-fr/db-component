@@ -46,54 +46,54 @@ ExampleDb.prototype.start = function() {
 
   // create some instances
   return when.all([
-      Company.create({ name: 'saio' })
-        .then(function(_saio) {
-          saio = _saio;
-        }),
-      Project.create({ name: 'lily' })
-        .then(function(_lily) {
-          lily = _lily;
-        }),
-      User.create({ name: 'jc' })
-        .then(function(_jc) {
-          jc = _jc;
-        }),
-      User.create({ name: 'mich' })
-        .then(function(_mich) {
-          mich = _mich;
-        })
+    Company.create({ name: 'saio' })
+      .then(function(_saio) {
+        saio = _saio;
+      }),
+    Project.create({ name: 'lily' })
+      .then(function(_lily) {
+        lily = _lily;
+      }),
+    User.create({ name: 'jc' })
+      .then(function(_jc) {
+        jc = _jc;
+      }),
+    User.create({ name: 'mich' })
+      .then(function(_mich) {
+        mich = _mich;
+      })
+  ]).then(function() {
 
     // create associations
-    ]).then(function() {
-      return when.all([
-          saio.addUser(jc),
-          saio.addUser(mich),
-          saio.addProject(lily),
-          lily.addUser(jc),
-          lily.addUser(mich)
-        ]);
+    return when.all([
+      saio.addUser(jc),
+      saio.addUser(mich),
+      saio.addProject(lily),
+      lily.addUser(jc),
+      lily.addUser(mich),
+    ]);
 
-    // run a test query
-    }).then(function() {
-      return User.findAll({
-          where: {
-            CompanyId: saio.id
-          }
-        });
-
-    // check the result
-    }).then(function(users) {
-      if (users.length !== 2 ||
-          users[0].name !== 'jc' && users[0].name !== 'mich' ||
-          users[1].name !== 'jc' && users[1].name !== 'mich' ||
-          users[0] === users[1]) {
-        return when.reject(new Error('test failed: cannot find saio employees'));
-      }
-      return when.resolve();
-
-    }).then(function() {
-      console.log('it SAUL GOODMAN !');
+  // run a test query
+  }).then(function() {
+    return User.findAll({
+      where: {
+        CompanyId: saio.id
+      },
     });
+
+  // check the result
+  }).then(function(users) {
+    if (users.length !== 2 ||
+        users[0].name !== 'jc' && users[0].name !== 'mich' ||
+        users[1].name !== 'jc' && users[1].name !== 'mich' ||
+        users[0] === users[1]) {
+      return when.reject(new Error('test failed: cannot find saio employees'));
+    }
+    return when.resolve();
+
+  }).then(function() {
+    console.log('it SAUL GOODMAN !');
+  });
 };
 
 module.exports = ExampleDb;
