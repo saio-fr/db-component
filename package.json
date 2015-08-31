@@ -1,0 +1,30 @@
+{
+  "name": "@saio/db-component",
+  "version": "0.1.0",
+  "description": "database service-component",
+  "main": "./db.js",
+  "dependencies": {
+    "sequelize": "*",
+    "mysql": "*"
+  },
+  "devDependencies": {
+    "@saio/service-runner": "*",
+    "when": "*",
+    "pg": "*",
+    "pg-hstore": "*"
+  },
+  "scripts": {
+    "pretest": "bash test/db/start.sh",
+    "test": "cd test && service-runner test.js",
+    "posttest": "bash test/db/stop.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:saio-fr/lib.git"
+  },
+  "author": "saio",
+  "bugs": {
+    "url": "https://github.com/saio-fr/lib/issues"
+  },
+  "homepage": "https://github.com/saio-fr/lib"
+}
