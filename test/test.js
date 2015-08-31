@@ -17,7 +17,7 @@
  |                                                 |
 \*-------------------------------------------------*/
 
-var Db = require('../db.js');
+var Db = require('../src/db.js');
 var when = require('when');
 var path = require('path');
 
