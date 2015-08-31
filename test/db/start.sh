@@ -1,7 +1,7 @@
 docker pull postgres;
 docker run -d \
 	--name db \
-	-p 5432:5432 \
+	-p 5444:5432 \
 	-e POSTGRES_PASSWORD=test \
 	postgres;
 docker build -t dbadmin test/db/phppgadmin/;

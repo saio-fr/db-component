@@ -29,7 +29,7 @@ var ExampleDb = function(container, options) {
     password: 'test',
     dialect: 'postgres',
     host: options.h ? options.h : 'localhost',
-    port: options.p ? options.p : '5432',
+    port: options.p ? options.p : '5444',
     dbname: 'postgres',
     model: ['model', './model2/Project.js', path.resolve(process.env.PWD, 'model3')]
   });
