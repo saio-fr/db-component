@@ -25,12 +25,12 @@ var ExampleDb = function(container, options) {
   var that = this;
 
   that.db = container.use('db', Db, {
-    user: 'postgres',
-    password: 'test',
-    dialect: 'postgres',
-    host: options.h ? options.h : 'localhost',
-    port: options.p ? options.p : '5444',
-    dbname: 'postgres',
+    user: options.user ? options.user : 'postgres',
+    password: options.password ? options.password : 'test',
+    dialect: options.dialect ? options.dialect : 'postgres',
+    host: options.host ? options.host : 'localhost',
+    port: options.port ? options.port : '5432',
+    dbname: options.dbname ? options.dbname : 'postgres',
     model: ['model', './model2/Project.js', path.resolve(process.env.PWD, 'model3')]
   });
 };

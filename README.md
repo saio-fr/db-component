@@ -1,11 +1,11 @@
-cDB : Database ORM Component for MS-SAIO
+Database ORM Component for MS-SAIO
 ==========================================
 cDB is a ms-saio component integration for Sequelize so if you want to use it you should read [the doc](http://docs.sequelizejs.com/en/latest/) !
 
 Attributes :
 ------------
 * `sequelize : Sequelize`
-* `model : Object as { [Sequelize.Model.name] : [Sequelize.Model]}`   
+* `model : Object as { [Sequelize.Model.name] : [Sequelize.Model]}`
     the Model.name is the first arg of sequelize.define(), check Model Handling for more info.
 
 Methods :
@@ -34,7 +34,7 @@ module.exports = function(sequelize, DataTypes) {
 };
 ```
 
-If a model has a class method onload, it will be called with the component instance as argument after all models are imported. The model would look like that :   
+If a model has a class method onload, it will be called with the component instance as argument after all models are imported. The model would look like that :
 ```javascript
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('Company', {
@@ -54,22 +54,23 @@ module.exports = function(sequelize, DataTypes) {
 Example :
 ---------
 To run the example you need ms-saio & docker.  
-The exampleDB component accepts as options :  
+The test component accepts as options :  
 * -h : postgresql host (default to localhost)
 * -p : postgresql port (default to 5432)
 
-In example/db, the start.sh script launch 2 containers :  
-* one launching a postgresql db on port 50001
+In test/db, the start.sh script launch 2 containers :  
+* one launching a postgresql db on port 5432
 * the other launching a phppgadmin on port 50002
 
 To install & run in local :
 ```bash
     $ cd path/to/cDB
     $ npm install
-    $ cd ./example/db
+    $ cd ./test/db
     $ sh start.sh
     $ cd ..
-    $ ms-saio exampleDB.js -p 50001
+    $ ms-saio test.js
+      # check test.js for options & default user, db, host ... values
       # feel free to check the result at http://localhost:50002/
       # user : "postgres" / password : "test"
     $ cd db

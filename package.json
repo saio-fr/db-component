@@ -14,9 +14,8 @@
     "pg-hstore": "*"
   },
   "scripts": {
-    "pretest": "bash test/db/start.sh",
-    "test": "cd test && service-runner test.js",
-    "posttest": "bash test/db/stop.sh"
+    "pretest": "eslint .",
+    "test": "cd test && service-runner test.js --user ubuntu --dbname circle_test"
   },
   "repository": {
     "type": "git",
