@@ -64,7 +64,7 @@ In test/db, the start.sh script launch 2 containers :
 
 To install & run in local :
 ```bash
-    $ cd path/to/cDB
+    $ cd path/to/database-component
     $ npm install
     $ cd ./test/db
     $ sh start.sh

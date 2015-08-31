@@ -11,7 +11,8 @@
     "@saio/service-runner": "*",
     "when": "*",
     "pg": "*",
-    "pg-hstore": "*"
+    "pg-hstore": "*",
+    "eslint": "*"
   },
   "scripts": {
     "pretest": "eslint .",
