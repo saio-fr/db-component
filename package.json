@@ -1,17 +1,17 @@
 {
   "name": "@saio/db-component",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "database service-component",
   "main": "./src/main.js",
   "dependencies": {
     "sequelize": "*",
-    "mysql": "*"
+    "mysql": "*",
+    "pg": "*",
+    "pg-hstore": "*"
   },
   "devDependencies": {
     "@saio/service-runner": "*",
     "when": "*",
-    "pg": "*",
-    "pg-hstore": "*",
     "eslint": "*"
   },
   "scripts": {
