@@ -3,7 +3,6 @@ docker build -t test -f ./tasks/integration/dockerfiles/testDockerfile .
 echo "starting test database"
 docker run -d \
 	--name db \
-	-p 5432:5432 \
 	-e POSTGRES_PASSWORD=test \
 	postgres
 sleep 4
