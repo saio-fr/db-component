@@ -26,6 +26,7 @@ module.exports = function(sequelize, DataTypes) {
         var models = db.model;
         models.Company.hasMany(models.User);
         models.Company.hasMany(models.Project);
+        models.Company.hasMany(models.Integrator);
       }
     }
   });

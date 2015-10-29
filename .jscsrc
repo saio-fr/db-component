@@ -10,7 +10,11 @@
   // @AT default true, confict with promises
   "requirePaddingNewLinesAfterBlocks": null,
 
-  "fileExtensions": [".js", ".json"],
+  // @AT default true, rule full of shit
+  "requireTrailingComma": null,
+
+  // @AT remove .json parsing because of an undefined rule error
+  "fileExtensions": [".js"],
   "maxErrors": 10,
   "excludeFiles": [
     ".git/**",

@@ -17,83 +17,70 @@
  |                                                 |
 \*-------------------------------------------------*/
 
-var Sequelize = require('sequelize');
 var util = require('util');
 var path = require('path');
 var fs = require('fs');
+var Sequelize = require('sequelize');
+var when = require('when');
+var _ = require('underscore');
+
+function isJsFile(filePath) {
+  return path.extname(filePath) === '.js';
+}
+
+function getFunctions(array) {
+  return _.filter(array, function(value) {
+    return _.isFunction(value);
+  });
+}
 
 // parse an array of files and folders to get all the .js files in them (with absolute path)
 function getJSFiles(paths) {
-  var files = [];
-  paths.forEach(function(aPath) {
+  return _.chain(paths)
+  .filter(function(aPath) {
+    return _.isString(aPath);
+  })
+  .map(function(aPath) {
     if (!path.isAbsolute(aPath)) {
-      aPath = path.resolve(process.env.PWD, aPath);
+      return path.resolve(process.env.PWD, aPath);
     }
-
-    if (path.extname(aPath) === '.js') {
-      files.push(aPath);
-      return;
+    return aPath;
+  })
+  .reduce(function(jsFiles, aPath) {
+    if (isJsFile(aPath)) {
+      jsFiles.push(aPath);
+    } else if (fs.statSync(aPath).isDirectory()) {
+      var subJsFiles = _.chain(fs.readdirSync(aPath))
+        .filter(isJsFile)
+        .map(function(aSubPath) {
+          return path.join(aPath, aSubPath);
+        })
+        .value();
+      jsFiles = jsFiles.concat(subJsFiles);
     }
-
-    if (!fs.statSync(aPath).isDirectory()) {
-      return;
-    }
-
-    fs.readdirSync(aPath)
-      .filter(function(filePath) {
-        return path.extname(filePath) === '.js';
-      })
-      .forEach(function(filePath) {
-        filePath = path.join(aPath, filePath);
-        files.push(filePath);
-      });
-  });
-  return files;
+    return jsFiles;
+  }, [])
+  .value();
 }
 
 var Db = function(container, options) {
-  var that = this;
-  var dialect;
-  var user;
-  var password;
-  var host;
-  var port;
-  var dbname;
-  var storage;
-  var modelPaths;
+  _.defaults(options, {
+    dialect: 'postgres',
+    host: 'localhost',
+    port: 5432,
+    dbname: 'database',
+    model: [],
+    autoSync: true
+  });
 
-  if (options) {
-    dialect = options.dialect ? options.dialect : 'postgres';
-    user = options.user ? options.user : null;
-    password = options.password ? options.password : null;
-    host = options.host ? options.host : 'localhost';
-    port = options.port ? options.port : '5432';
-    dbname = options.dbname ? options.dbname : 'database';
-    storage = options.storage ? options.storage : './database.sqlite';
-    modelPaths = options.model ? options.model : [];
-  } else {
-    dialect = 'postgres';
-    user = null;
-    password = null;
-    host = 'localhost';
-    port = '5432';
-    dbname = 'database';
-    storage = './database.sqlite';
-    modelPaths = [];
+  if (!_.isArray(options.model)) {
+    options.model = [options.model];
   }
 
-  // get all model files (absolute path) from the file/folder paths array
-  if (!util.isArray(modelPaths)) {
-    modelPaths = [modelPaths];
-  }
-
-  modelPaths = getJSFiles(modelPaths);
-
-  var sequelize = new Sequelize(dbname, user, password, {
-    host: host,
-    port: port,
-    dialect: dialect,
-    storage: storage,
+  var sequelize = new Sequelize(options.dbname, options.user, options.password, {
+    host: options.host,
+    port: options.port,
+    dialect: options.dialect,
     pool: {
       min: 0,
       max: 5,
@@ -101,22 +88,29 @@ var Db = function(container, options) {
     }
   });
 
-  // model imports
+  // model import/load
   var models = {};
-  var model;
-  modelPaths.forEach(function(modelPath) {
-    model = sequelize.import(modelPath);
+  var modelPaths = getJSFiles(options.model);
+  var modelConstructors = getFunctions(options.model);
+  _.each(modelPaths, function(modelPath) {
+    var model = sequelize.import(modelPath);
+    models[model.name] = model;
+  });
+  _.each(modelConstructors, function(constructor) {
+    var model = constructor(sequelize, sequelize.Sequelize);
     models[model.name] = model;
   });
 
-  // for now, sequelize is public (used for the call to .transaction())
-  that.sequelize = sequelize;
-  that.model = models;
+  // for now, sequelize is public
+  this.sequelize = sequelize;
+  this.model = models;
+  this.autoSync = options.autoSync;
 
-  // models association rules (defined as a classmethod .associate(models) in the model)
-  Object.keys(models).forEach(function(name) {
-    if ('onload' in models[name]) {
-      models[name].onload(that);
+  // models .onload classmethod calls (useful for association mainly)
+  var that = this;
+  _.each(models, function(model) {
+    if ('onload' in model) {
+      model.onload(that);
     }
   });
 };
@@ -124,15 +118,23 @@ var Db = function(container, options) {
 Db.prototype.start = function() {
   var that = this;
   return that.sequelize.authenticate()
-    .then(function() {
-      return that.sequelize.sync();
-    });
+  .then(function() {
+    if (that.autoSync) {
+      return that.sync();
+    }
+    return when.resolve();
+  });
 };
 
 // useful only if multiple Db instances
 Db.prototype.stop = function() {
-  var that = this;
-  that.sequelize.close();
+  // sadly sequelize.close does not return a promise.
+  this.sequelize.close();
+  return when.resolve().delay(1000);
+};
+
+Db.prototype.sync = function() {
+  return this.sequelize.sync();
 };
 
 module.exports = Db;

@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "sequelize": "*",
+    "pg": "*",
+    "pg-hstore": "*",
+    "when": "*",
+    "underscore": "*",
+    "@saio/service-runner": "*"
+  },
+  "scripts": {
+    "test": "cd test && service-runner test.integration.js"
+  }
+}
