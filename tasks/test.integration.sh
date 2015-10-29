@@ -10,16 +10,14 @@ sleep 4
 
 echo "running test with default autoSync (true)"
 docker run \
-	--rm \
-	--name test \
+	--name test-sync \
 	--link db:db \
 	test
 TEST_EC_SYNC=$?
 
 echo "running test with autoSync false"
 docker run \
-	--rm \
-	--name test \
+	--name test-no-sync \
 	--link db:db \
 	test --no-sync
 TEST_EC_NO_SYNC=$?
